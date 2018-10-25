@@ -30,8 +30,12 @@ int picstrigger(const char *filename)
 		TextureManager tm(filename);
 		sf::IntRect region = regionSelector(tm.getTextureAsSprite(), tm.getSize());
 
+		if (region == sf::IntRect(0, 0, 0, 0)) {
+			return EXIT_SUCCESS;
+		}
 		return triggerPlayer(tm.getPartialTextureAsSprite(region),
-				     sf::Vector2u(region.width, region.height));
+				     sf::Vector2u(region.height - region.top,
+						  region.width - region.left));
 	} catch (const std::runtime_error &e) {
 		return EXIT_FAILURE;
 	}
