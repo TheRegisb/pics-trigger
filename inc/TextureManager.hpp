@@ -19,8 +19,18 @@
 
 #pragma once
 
-/*
-** picstigger.cpp
-*/
+#include <stdexcept>
+#include <SFML/Graphics.hpp>
 
-int picstrigger(const char *filename);
+class TextureManager {
+
+public:
+	TextureManager (const char *filename);
+	~TextureManager();
+
+	sf::Sprite getTextureAsSprite() const noexcept; // TODO return smart ptr (perhaps unique)
+	sf::Sprite getPartialTextureAsSprite(sf::IntRect dimensions) const noexcept;
+	sf::Vector2u getSize() const noexcept;
+private:
+	sf::Texture _texture;
+};

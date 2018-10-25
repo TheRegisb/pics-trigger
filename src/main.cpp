@@ -20,6 +20,8 @@
 #include "pics-trigger.hpp"
 #include "hashUtils.hpp"
 
+#include <iostream>
+
 constexpr int VERSION_MAJOR = 0;
 constexpr int VERSION_MINOR = 1;
 
@@ -35,7 +37,7 @@ int main(int ac, char **av)
 			  << std::endl;
 		return EXIT_FAILURE;
 	}
-	return EXIT_SUCCESS;
+	return picstrigger(av[1]);
 }
 
 int optionsHandle(const char *arg)

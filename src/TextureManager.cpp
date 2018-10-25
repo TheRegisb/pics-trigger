@@ -17,10 +17,36 @@
 // specific language governing permissions and limitations
 // under the License.
 
-#pragma once
+#include "TextureManager.hpp"
 
-/*
-** picstigger.cpp
-*/
+TextureManager::TextureManager(const char *filename)
+{
+	if (!_texture.loadFromFile(filename)) {
+		throw new std::runtime_error("Failed to load image (see console output)");
+	}
+	_texture.setSmooth(true);
+}
 
-int picstrigger(const char *filename);
+TextureManager::~TextureManager()
+{
+}
+
+sf::Sprite TextureManager::getTextureAsSprite() const noexcept
+{
+	sf::Sprite sprite(_texture);
+
+	return sprite;
+}
+
+sf::Sprite TextureManager::getPartialTextureAsSprite(sf::IntRect dimensions) const noexcept
+{
+	sf::Sprite sprite(_texture);
+
+	sprite.setTextureRect(dimensions);
+	return sprite;
+}
+
+sf::Vector2u TextureManager::getSize() const noexcept
+{
+	return _texture.getSize();
+}
