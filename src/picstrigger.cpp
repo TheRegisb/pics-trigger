@@ -21,6 +21,8 @@
 #include <SFML/Window.hpp>
 #include <iostream>
 #include <cmath>
+#include <cstdlib>
+#include <ctime>
 
 sf::IntRect regionSelector(sf::Sprite fullImage, sf::Vector2u fullSize);
 int triggerPlayer(sf::Sprite partialImage, sf::Vector2u partialSize);
@@ -102,6 +104,9 @@ int triggerPlayer(sf::Sprite partialImage, sf::Vector2u partialSize)
 {
 	sf::RenderWindow window(sf::VideoMode(partialSize.x, partialSize.y), "triggered");
 
+	srand(time(nullptr));
+	partialImage.setScale(1.05f, 1.05f);
+	partialImage.setPosition(-5.0f, -5.0f);
 	while (window.isOpen()) {
 		sf::Event event;
 
@@ -110,6 +115,7 @@ int triggerPlayer(sf::Sprite partialImage, sf::Vector2u partialSize)
 				window.close();
 			}
 		}
+		partialImage.setPosition((rand() % 10) - 10, (rand() % 10) - 10);
 		window.clear();
 		window.draw(partialImage);
 		window.display();
