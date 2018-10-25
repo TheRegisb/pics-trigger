@@ -99,7 +99,7 @@ sf::IntRect regionSelector(sf::Sprite fullImage, sf::Vector2u fullSize)
 }
 
 // TODO
-// make the image jitter around, with overlay, and "triggered" tagline
+// add color overlay(s ?) and "triggered" tagline
 int triggerPlayer(sf::Sprite partialImage, sf::Vector2u partialSize)
 {
 	sf::RenderWindow window(sf::VideoMode(partialSize.x, partialSize.y), "triggered");

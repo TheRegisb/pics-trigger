@@ -23,7 +23,7 @@
 #include <iostream>
 
 constexpr int VERSION_MAJOR = 0;
-constexpr int VERSION_MINOR = 1;
+constexpr int VERSION_MINOR = 7;
 
 int optionsHandle(const char *);
 
