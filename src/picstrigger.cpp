@@ -18,41 +18,75 @@
 // under the License.
 
 #include "TextureManager.hpp"
+#include <SFML/Window.hpp>
+#include <iostream>
+
+sf::IntRect regionSelector(sf::Sprite fullImage, sf::Vector2u fullSize);
+int triggerPlayer(sf::Sprite partialImage, sf::Vector2u partialSize);
 
 int picstrigger(const char *filename)
 {
 	try {
 		TextureManager tm(filename);
+		sf::IntRect region = regionSelector(tm.getTextureAsSprite(), tm.getSize());
+
+		return triggerPlayer(tm.getPartialTextureAsSprite(region),
+				     sf::Vector2u(region.width, region.height));
 	} catch (const std::runtime_error &e) {
 		return EXIT_FAILURE;
 	}
 	return EXIT_SUCCESS;
 }
 
-// TODO display the entire image,
-// let user do a cursor selection and return rectangle coords
-sf::Vector2u regionSelector(sf::Sprite &fullImage, sf::Vector2u fullSize)
+// TODO display selection rectangle
+sf::IntRect regionSelector(sf::Sprite fullImage, sf::Vector2u fullSize)
 {
-	// sf::RenderWindow window(sf::VideoMode(tm.getSize().x, tm.getSize().y), "Region selector");
-	// while (window.isOpen())
-	// {
-	// 	sf::Event event;
-	// 	while (window.pollEvent(event))
-	// 	{
-	// 		if (event.type == sf::Event::Closed)
-	// 			window.close();
-	// 	}
-	// 	window.clear();
-	// 	window.draw(sprite);
-	// 	window.display();
-	// }
-	// return EXIT_SUCCESS;
-	return sf::Vector2u(0, 0);
+	sf::RenderWindow window(sf::VideoMode(fullSize.x, fullSize.y), "Region selector");
+	sf::IntRect region(0, 0, 0, 0);
+
+	while (window.isOpen())
+	{
+		sf::Event event;
+
+		while (window.pollEvent(event)) {
+			switch (event.type) {
+			case sf::Event::Closed:
+				window.close();
+				break;
+			case sf::Event::MouseButtonPressed:
+				region.left = sf::Mouse::getPosition(window).x;
+				region.top = sf::Mouse::getPosition(window).y;
+				break;
+			case sf::Event::MouseButtonReleased:
+				region.width = sf::Mouse::getPosition(window).x;
+				region.height = sf::Mouse::getPosition(window).y;
+				window.close();
+			}
+		}
+		window.clear();
+		window.draw(fullImage);
+		window.display();
+	}
+	return region;
 }
 
-// TODO display the partial image
-// make it jitter around, with overlay, and "triggered" tagline
-int triggerPlayer(sf::Sprite &partialImage)
+// TODO
+// make the image jitter around, with overlay, and "triggered" tagline
+int triggerPlayer(sf::Sprite partialImage, sf::Vector2u partialSize)
 {
+	sf::RenderWindow window(sf::VideoMode(partialSize.x, partialSize.y), "triggered");
+
+	while (window.isOpen()) {
+		sf::Event event;
+
+		while (window.pollEvent(event)) {
+			if (event.type == sf::Event::Closed) {
+				window.close();
+			}
+		}
+		window.clear();
+		window.draw(partialImage);
+		window.display();
+	}
 	return 0;
 }
