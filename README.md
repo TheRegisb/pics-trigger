@@ -10,7 +10,7 @@ Change directory to the root of the project. Then, type `mkdir build`, `cd build
 Then call your system compiler on the generated solution, i.e. `make` or `msbuild pics-trigger.vcproj`
 
 # Usage
-pics-triggered [OPTION] [image-file]
+pics-trigger [OPTION] [image-file]
 
 Where OPTION is:
 ```
