@@ -1,3 +1,5 @@
+// Copyright 2018 Régis Berthelot
+
 // Licensed to the Apache Software Foundation (ASF) under one
 // or more contributor license agreements.  See the NOTICE file
 // distributed with this work for additional information
@@ -16,25 +18,51 @@
 // under the License.
 
 #include "pics-trigger.hpp"
-#include <iostream>
+#include "hashUtils.hpp"
 
-int main()
+constexpr int VERSION_MAJOR = 0;
+constexpr int VERSION_MINOR = 1;
+
+int optionsHandle(const char *);
+
+int main(int ac, char **av)
 {
-	sf::RenderWindow window(sf::VideoMode(200, 200), "SFML works!");
-	sf::CircleShape shape(100.0f);
-
-	shape.setFillColor(sf::Color::Green);
-	while (window.isOpen()) {
-		sf::Event event;
-
-		while (window.pollEvent(event)) {
-			if (event.type == sf::Event::Closed) {
-				window.close();
-			}
-		}
-		window.clear();
-		window.draw(shape);
-		window.display();
+	if (ac == 2 && av[1][0] == '-') {
+		return optionsHandle(av[1]);
+	} else if (ac != 2) {
+		std::cerr << av[0] << ": Bad syntax, "
+			  << "type " << av[0] << " --help for more info."
+			  << std::endl;
+		return EXIT_FAILURE;
 	}
 	return EXIT_SUCCESS;
+}
+
+int optionsHandle(const char *arg)
+{
+	switch (hash(arg)) {
+	case (hash("--version")):
+	case (hash("-v")):
+		std::cout << "pics-trigger, "
+			  << "version " << VERSION_MAJOR << "." << VERSION_MINOR
+			  << ", made by Régis Berthelot, licensed under the "
+			  << "Apache Licence version 2.0"
+			  << std::endl;
+		return EXIT_SUCCESS;
+	case (hash("--help")):
+	case (hash("-h")):
+		std::cout << "Usage: pics-trigger [OPTION] [image-file]"
+			  << std::endl << std::endl
+			  << "  -h,--help" << std::endl
+			  << "\t\tDisplay this help message"
+			  << std::endl
+			  << "  -v,--version" << std::endl
+			  << "\t\tDisplay version number, author and licensing"
+			  << std::endl;
+	return EXIT_SUCCESS;
+	default:
+		std::cerr << "bad arg + help" << std::endl;
+		return EXIT_FAILURE;
+	}
+	return EXIT_FAILURE;
 }
