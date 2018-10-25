@@ -20,9 +20,11 @@
 #include "TextureManager.hpp"
 #include <SFML/Window.hpp>
 #include <iostream>
+#include <cmath>
 
 sf::IntRect regionSelector(sf::Sprite fullImage, sf::Vector2u fullSize);
 int triggerPlayer(sf::Sprite partialImage, sf::Vector2u partialSize);
+void swap(int *left, int *right);
 
 int picstrigger(const char *filename)
 {
@@ -33,21 +35,31 @@ int picstrigger(const char *filename)
 		if (region == sf::IntRect(0, 0, 0, 0)) {
 			return EXIT_SUCCESS;
 		}
+		if (region.width < region.left) {
+			swap(&region.width, &region.left);
+		}
+		if (region.height < region.top) {
+			swap(&region.height, &region.top);
+		}
 		return triggerPlayer(tm.getPartialTextureAsSprite(region),
-				     sf::Vector2u(region.height - region.top,
-						  region.width - region.left));
+				     sf::Vector2u(std::abs(region.width - region.left),
+						  std::abs(region.height - region.top)));
 	} catch (const std::runtime_error &e) {
 		return EXIT_FAILURE;
 	}
 	return EXIT_SUCCESS;
 }
 
-// TODO display selection rectangle
 sf::IntRect regionSelector(sf::Sprite fullImage, sf::Vector2u fullSize)
 {
 	sf::RenderWindow window(sf::VideoMode(fullSize.x, fullSize.y), "Region selector");
 	sf::IntRect region(0, 0, 0, 0);
+	sf::RectangleShape visualSelect;
+	bool isSelecting = false;
 
+	visualSelect.setOutlineColor(sf::Color::Red);
+	visualSelect.setFillColor(sf::Color(0, 0, 0, 0));
+	visualSelect.setOutlineThickness(2);
 	while (window.isOpen())
 	{
 		sf::Event event;
@@ -60,6 +72,15 @@ sf::IntRect regionSelector(sf::Sprite fullImage, sf::Vector2u fullSize)
 			case sf::Event::MouseButtonPressed:
 				region.left = sf::Mouse::getPosition(window).x;
 				region.top = sf::Mouse::getPosition(window).y;
+				isSelecting = true;
+				visualSelect.setPosition(region.left, region.top);
+				break;
+			case sf::Event::MouseMoved:
+				if (isSelecting) {
+					visualSelect.setSize(
+						sf::Vector2f(sf::Mouse::getPosition(window).x - region.left,
+							     sf::Mouse::getPosition(window).y - region.top));
+				}
 				break;
 			case sf::Event::MouseButtonReleased:
 				region.width = sf::Mouse::getPosition(window).x;
@@ -69,6 +90,7 @@ sf::IntRect regionSelector(sf::Sprite fullImage, sf::Vector2u fullSize)
 		}
 		window.clear();
 		window.draw(fullImage);
+		window.draw(visualSelect);
 		window.display();
 	}
 	return region;
@@ -93,4 +115,12 @@ int triggerPlayer(sf::Sprite partialImage, sf::Vector2u partialSize)
 		window.display();
 	}
 	return 0;
+}
+
+void swap(int *left, int *right)
+{
+	int tmp = *left;
+
+	*left = *right;
+	*right = tmp;
 }
