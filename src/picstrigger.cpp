@@ -59,6 +59,7 @@ sf::IntRect regionSelector(sf::Sprite fullImage, sf::Vector2u fullSize)
 	sf::RectangleShape visualSelect;
 	bool isSelecting = false;
 
+	window.setFramerateLimit(60);
 	visualSelect.setOutlineColor(sf::Color::Red);
 	visualSelect.setFillColor(sf::Color(0, 0, 0, 0));
 	visualSelect.setOutlineThickness(2);
@@ -104,6 +105,7 @@ int triggerPlayer(sf::Sprite partialImage, sf::Vector2u partialSize)
 {
 	sf::RenderWindow window(sf::VideoMode(partialSize.x, partialSize.y), "triggered");
 
+	window.setFramerateLimit(60);
 	srand(time(nullptr));
 	partialImage.setScale(1.05f, 1.05f);
 	partialImage.setPosition(-5.0f, -5.0f);
