@@ -18,8 +18,10 @@
 // under the License.
 
 #include "TextureManager.hpp"
+#include "SpriteSheet.hpp"
 #include <SFML/Window.hpp>
 #include <iostream>
+#include <sstream>
 #include <cmath>
 #include <cstdlib>
 #include <ctime>
@@ -48,6 +50,7 @@ int picstrigger(const char *filename)
 				     sf::Vector2u(std::abs(region.width - region.left),
 						  std::abs(region.height - region.top)));
 	} catch (const std::runtime_error &e) {
+		std::cerr << e.what() << std::endl;
 		return EXIT_FAILURE;
 	}
 	return EXIT_SUCCESS;
@@ -78,13 +81,15 @@ sf::IntRect regionSelector(sf::Sprite fullImage, sf::Vector2u fullSize)
 				region.left = sf::Mouse::getPosition(window).x;
 				region.top = sf::Mouse::getPosition(window).y;
 				isSelecting = true;
-				visualSelect.setPosition(region.left, region.top);
+				visualSelect.setPosition(static_cast<float>(region.left),
+							 static_cast<float>(region.top));
 				break;
 			case sf::Event::MouseMoved:
 				if (isSelecting) {
 					visualSelect.setSize(
-						sf::Vector2f(sf::Mouse::getPosition(window).x - region.left,
-							     sf::Mouse::getPosition(window).y - region.top));
+						sf::Vector2f(
+							     sf::Mouse::getPosition(window).x - static_cast<float>(region.left),
+							     sf::Mouse::getPosition(window).y - static_cast<float>(region.top)));
 				}
 				break;
 			case sf::Event::MouseButtonReleased:
@@ -107,18 +112,15 @@ int triggerPlayer(sf::Sprite partialImage, sf::Vector2u partialSize)
 {
 	sf::RenderWindow window(sf::VideoMode(partialSize.x, partialSize.y),
 				"triggered");
-	sf::Texture sheet;
 	const unsigned int TMP_SHEET_SIZE = 6;
-	auto size = window.getSize();
-	sheet.create(size.x * TMP_SHEET_SIZE, size.y);
+	SpriteSheet spritesheet(window.getSize(), TMP_SHEET_SIZE);
 
 	window.setFramerateLimit(60);
-	srand(time(nullptr));
+	srand(static_cast<unsigned int>(time(nullptr)));
 	// Upscale the image by 5% to avoid displaying black bar.
 	partialImage.setScale(partialImage.getScale().x * 1.05f,
 			      partialImage.getScale().y * 1.05f);
 	partialImage.setPosition(-5.0f, -5.0f);
-	int loop = 0;
 	while (window.isOpen()) {
 		sf::Event event;
 
@@ -127,8 +129,8 @@ int triggerPlayer(sf::Sprite partialImage, sf::Vector2u partialSize)
 				window.close();
 			}
 		}
-		partialImage.setPosition((rand() % 10) - 10,
-					 (rand() % 10) - 10);
+		partialImage.setPosition((rand() % 10) - 10.0f,
+					 (rand() % 10) - 10.0f);
 		window.clear();
 		window.draw(partialImage);
 		if (loop < TMP_SHEET_SIZE) {

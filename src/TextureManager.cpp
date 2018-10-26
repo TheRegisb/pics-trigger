@@ -36,7 +36,8 @@ TextureManager::TextureManager(const char *filename)
 		_safeScale = (displayRatio > static_cast<float>(size.x) / size.y ?
 			       static_cast<float>(desktopMode.height) / size.y
 			       : static_cast<float>(desktopMode.width) / size.x);
-		_safeSize = sf::Vector2u(size.x * _safeScale, size.y * _safeScale);
+		_safeSize = sf::Vector2u(static_cast<unsigned int>(size.x * _safeScale),
+					 static_cast<unsigned int>(size.y * _safeScale));
 	} else {
 		_safeScale = 1.0f;
 		_safeSize = _texture.getSize();
@@ -59,8 +60,10 @@ sf::Sprite TextureManager::getPartialTextureAsSprite(sf::IntRect dimensions) con
 {
 	sf::Sprite sprite(_texture);
 	// Deduce the original positionx from the scaled down region.
-	sf::IntRect scaled(dimensions.left / _safeScale, dimensions.top / _safeScale,
-			   dimensions.width / _safeScale, dimensions.height / _safeScale);
+	sf::IntRect scaled(static_cast<int>(dimensions.left   / _safeScale),
+			   static_cast<int>(dimensions.top    / _safeScale),
+			   static_cast<int>(dimensions.width  / _safeScale),
+			   static_cast<int>(dimensions.height / _safeScale));
 
 	sprite.setTextureRect(scaled);
 	sprite.setScale(_safeScale, _safeScale);
