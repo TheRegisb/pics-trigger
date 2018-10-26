@@ -107,6 +107,10 @@ int triggerPlayer(sf::Sprite partialImage, sf::Vector2u partialSize)
 {
 	sf::RenderWindow window(sf::VideoMode(partialSize.x, partialSize.y),
 				"triggered");
+	sf::Texture sheet;
+	const unsigned int TMP_SHEET_SIZE = 6;
+	auto size = window.getSize();
+	sheet.create(size.x * TMP_SHEET_SIZE, size.y);
 
 	window.setFramerateLimit(60);
 	srand(time(nullptr));
@@ -114,6 +118,7 @@ int triggerPlayer(sf::Sprite partialImage, sf::Vector2u partialSize)
 	partialImage.setScale(partialImage.getScale().x * 1.05f,
 			      partialImage.getScale().y * 1.05f);
 	partialImage.setPosition(-5.0f, -5.0f);
+	int loop = 0;
 	while (window.isOpen()) {
 		sf::Event event;
 
@@ -126,6 +131,17 @@ int triggerPlayer(sf::Sprite partialImage, sf::Vector2u partialSize)
 					 (rand() % 10) - 10);
 		window.clear();
 		window.draw(partialImage);
+		if (loop < TMP_SHEET_SIZE) {
+			sf::Texture windowContent;
+			windowContent.create(size.x, size.y);
+			windowContent.update(window);
+			sf::Image screenshot = windowContent.copyToImage();
+			sheet.update(screenshot, size.x * loop, 0);
+			loop++;
+		} else if (loop == TMP_SHEET_SIZE) {
+			sheet.copyToImage().saveToFile("/tmp/picstrigger_sheet.jpg");
+			loop++;
+		}
 		window.display();
 	}
 	return 0;
