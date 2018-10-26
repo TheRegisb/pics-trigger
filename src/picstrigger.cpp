@@ -32,7 +32,8 @@ int picstrigger(const char *filename)
 {
 	try {
 		TextureManager tm(filename);
-		sf::IntRect region = regionSelector(tm.getTextureAsSprite(), tm.getSize());
+		sf::IntRect region = regionSelector(tm.getTextureAsSprite(),
+						    tm.getSize());
 
 		if (region == sf::IntRect(0, 0, 0, 0)) {
 			return EXIT_SUCCESS;
@@ -54,7 +55,8 @@ int picstrigger(const char *filename)
 
 sf::IntRect regionSelector(sf::Sprite fullImage, sf::Vector2u fullSize)
 {
-	sf::RenderWindow window(sf::VideoMode(fullSize.x, fullSize.y), "Region selector");
+	sf::RenderWindow window(sf::VideoMode(fullSize.x, fullSize.y),
+				"Region selector");
 	sf::IntRect region(0, 0, 0, 0);
 	sf::RectangleShape visualSelect;
 	bool isSelecting = false;
@@ -103,11 +105,14 @@ sf::IntRect regionSelector(sf::Sprite fullImage, sf::Vector2u fullSize)
 // add color overlay(s ?) and "triggered" tagline
 int triggerPlayer(sf::Sprite partialImage, sf::Vector2u partialSize)
 {
-	sf::RenderWindow window(sf::VideoMode(partialSize.x, partialSize.y), "triggered");
+	sf::RenderWindow window(sf::VideoMode(partialSize.x, partialSize.y),
+				"triggered");
 
 	window.setFramerateLimit(60);
 	srand(time(nullptr));
-	partialImage.setScale(1.05f, 1.05f);
+	// Upscale the image by 5% to avoid displaying black bar.
+	partialImage.setScale(partialImage.getScale().x * 1.05f,
+			      partialImage.getScale().y * 1.05f);
 	partialImage.setPosition(-5.0f, -5.0f);
 	while (window.isOpen()) {
 		sf::Event event;
@@ -117,7 +122,8 @@ int triggerPlayer(sf::Sprite partialImage, sf::Vector2u partialSize)
 				window.close();
 			}
 		}
-		partialImage.setPosition((rand() % 10) - 10, (rand() % 10) - 10);
+		partialImage.setPosition((rand() % 10) - 10,
+					 (rand() % 10) - 10);
 		window.clear();
 		window.draw(partialImage);
 		window.display();

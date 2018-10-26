@@ -26,8 +26,8 @@ elseif (MSVC)
 endif()
 
 project(pics-trigger)
-set (pics-trigger_VERSION_MAJOR 0)
-set (pics-trigger_VERSION_MINOR 7)
+set (pics-trigger_VERSION_MAJOR 1)
+set (pics-trigger_VERSION_MINOR 0)
 
 include_directories(${CMAKE_SOURCE_DIR}/inc)
 

@@ -33,4 +33,6 @@ public:
 	sf::Vector2u getSize() const noexcept;
 private:
 	sf::Texture _texture;
+	sf::Vector2u _safeSize;
+	float _safeScale;
 };

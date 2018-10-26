@@ -19,12 +19,28 @@
 
 #include "TextureManager.hpp"
 
+#include <iostream>
 TextureManager::TextureManager(const char *filename)
 {
 	if (!_texture.loadFromFile(filename)) {
 		throw new std::runtime_error("Failed to load image (see console output)");
 	}
+	sf::VideoMode desktopMode = sf::VideoMode::getDesktopMode();
+	sf::Vector2u size = _texture.getSize();
+	float displayRatio = (static_cast<float>(desktopMode.width) / desktopMode.height);
+
 	_texture.setSmooth(true);
+	// If image is overflowing, set downscale for the largest bound.
+	if (size.x > desktopMode.width
+	    || size.y > desktopMode.height) {
+		_safeScale = (displayRatio > static_cast<float>(size.x) / size.y ?
+			       static_cast<float>(desktopMode.height) / size.y
+			       : static_cast<float>(desktopMode.width) / size.x);
+		_safeSize = sf::Vector2u(size.x * _safeScale, size.y * _safeScale);
+	} else {
+		_safeScale = 1.0f;
+		_safeSize = _texture.getSize();
+	}
 }
 
 TextureManager::~TextureManager()
@@ -35,18 +51,23 @@ sf::Sprite TextureManager::getTextureAsSprite() const noexcept
 {
 	sf::Sprite sprite(_texture);
 
+	sprite.setScale(_safeScale, _safeScale);
 	return sprite;
 }
 
 sf::Sprite TextureManager::getPartialTextureAsSprite(sf::IntRect dimensions) const noexcept
 {
 	sf::Sprite sprite(_texture);
+	// Deduce the original positionx from the scaled down region.
+	sf::IntRect scaled(dimensions.left / _safeScale, dimensions.top / _safeScale,
+			   dimensions.width / _safeScale, dimensions.height / _safeScale);
 
-	sprite.setTextureRect(dimensions);
+	sprite.setTextureRect(scaled);
+	sprite.setScale(_safeScale, _safeScale);
 	return sprite;
 }
 
 sf::Vector2u TextureManager::getSize() const noexcept
 {
-	return _texture.getSize();
+	return _safeSize;
 }
