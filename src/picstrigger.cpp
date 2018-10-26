@@ -133,16 +133,19 @@ int triggerPlayer(sf::Sprite partialImage, sf::Vector2u partialSize)
 					 (rand() % 10) - 10.0f);
 		window.clear();
 		window.draw(partialImage);
-		if (loop < TMP_SHEET_SIZE) {
-			sf::Texture windowContent;
-			windowContent.create(size.x, size.y);
-			windowContent.update(window);
-			sf::Image screenshot = windowContent.copyToImage();
-			sheet.update(screenshot, size.x * loop, 0);
-			loop++;
-		} else if (loop == TMP_SHEET_SIZE) {
-			sheet.copyToImage().saveToFile("/tmp/picstrigger_sheet.jpg");
-			loop++;
+		if (spritesheet.getState() == SpriteSheet::SheetState::BUILDING) {
+		  sf::Texture windowContent;
+		  windowContent.create(partialSize.x, partialSize.y);
+		  windowContent.update(window);
+		  spritesheet.addFrame(windowContent.copyToImage());
+		} else if (spritesheet.getState() == SpriteSheet::SheetState::READY) {
+		  std::stringstream filename;
+
+		  filename << "pics-triggers_"
+			   << time(nullptr) << "_"
+			   << TMP_SHEET_SIZE << "x"
+			   << partialSize.x << "x" << partialSize.y << ".jpg";
+		  spritesheet.saveToFile(filename.str());
 		}
 		window.display();
 	}
