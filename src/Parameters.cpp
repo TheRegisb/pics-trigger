@@ -22,6 +22,7 @@
 Parameters::Parameters() {
 	numberOfFrames = 6;
 	keepOnPlaying = true;
+	rgba = 0xFFFFFFFF; // Pure white, unalter source image
 }
 
 void Parameters::setNumberOfFrames(int numberOfFrames) {
@@ -38,4 +39,12 @@ void Parameters::setKeepOnPlaying(bool keepOnPlaying) {
 
 bool Parameters::getKeepOnPlaying() {
 	return keepOnPlaying;
+}
+
+void Parameters::setColorTint(unsigned int rgba) {
+	this->rgba = rgba;
+}
+
+unsigned int Parameters::getColorTint() {
+	return rgba;
 }

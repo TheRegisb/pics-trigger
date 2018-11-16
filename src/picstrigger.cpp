@@ -121,6 +121,7 @@ int triggerPlayer(sf::Sprite partialImage, sf::Vector2u partialSize)
 	partialImage.setScale(partialImage.getScale().x * 1.05f,
 			      partialImage.getScale().y * 1.05f);
 	partialImage.setPosition(-5.0f, -5.0f);
+	partialImage.setColor(sf::Color(Parameters::get().getColorTint()));
 	while (window.isOpen()) {
 		sf::Event event;
 

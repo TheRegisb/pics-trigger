@@ -19,6 +19,7 @@ Where OPTIONS is:
 ```
 -h,--help		Display usage information
 -v,--version		Display program version, author and licensing
--f,--frames		Number of frames in the output sheet, must be greater than zero
+-f,--frames [FRAMES]	Number of frames in the output sheet, must be greater than zero (default: 6)
 -p,--no-playback	Stop the program once the sprite sheet is completed
+-t,--tint [HEX_COLOR]	Add a color filter, where HEX_COLOR is a hexadecimal RGB value (default: FFFFFF, None)
 ```

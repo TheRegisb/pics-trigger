@@ -22,12 +22,18 @@
 #include "Parameters.hpp"
 
 #include <iostream>
+#include <sstream>
+#include <regex>
 
 constexpr int VERSION_MAJOR = 1;
 constexpr int VERSION_MINOR = 1;
-constexpr int CODE_CONTINUE = -1;
+constexpr int CODE_CONTINUE = 0xCAFE;
 
 int optionsHandle(char **);
+void displayVersion();
+void displayHelp();
+bool setFrameCount(const char *str);
+bool setTint(const char *str);
 
 int main(int ac, char **av)
 {
@@ -53,56 +59,37 @@ int optionsHandle(char **args)
 		switch (hash(args[i])) {
 		case (hash("--version")):
 		case (hash("-v")):
-			std::cout << "pics-trigger, "
-				  << "version " << VERSION_MAJOR << "." << VERSION_MINOR
-				  << ", made by Régis Berthelot, licensed under the "
-				  << "Apache Licence version 2.0"
-				  << std::endl;
+			displayVersion();
 		return EXIT_SUCCESS;
 
 		case (hash("--help")):
 		case (hash("-h")):
-			std::cout << "Usage: pics-trigger [OPTION] [image-file]"
-				  << std::endl << std::endl
-				  << "  -h,--help" << std::endl
-				  << "\t\tDisplay this help message"
-				  << std::endl
-				  << "  -v,--version" << std::endl
-				  << "\t\tDisplay version number, author and licensing"
-				  << std::endl
-				  << "  -f,--frames" << std::endl
-				  << "\t\tNumber of frames in the output sheet, must be greater than zero"
-				  << std::endl
-				  << "  -p,--no-playback" << std::endl
-				  << "\t\tStop the program once the sprite sheet is completed"
-				  << std::endl;
+			displayHelp();
 		return EXIT_SUCCESS;
 
 		case (hash("--frames")):
 		case (hash("-f")):
-			if (!args[i + 1]) {
-				std::cerr << "Error: Missing frames count" << std::endl;
-				return EXIT_FAILURE;
-			}
-		try {
-			int framesCount = std::stoi(args[i + 1]);
-
-			if (framesCount <= 0) {
-				Parameters::get().setNumberOfFrames(framesCount);
+			if (setFrameCount(args[i + 1])) {
+				i++;
+				break;
 			} else {
-				std::cerr << "Error: Frames count cannot be lower than one";
 				return EXIT_FAILURE;
 			}
-		} catch (const std::invalid_argument &e) {
-			std::cerr << "Error: Frames count is not a valid number" << std::endl;
-			return EXIT_FAILURE;
-		}
-		i++;
 		break;
 
 		case (hash("--no-playback")):
 		case (hash("-p")):
 			Parameters::get().setKeepOnPlaying(false);
+		break;
+
+		case (hash("-t")):
+		case (hash("--tint")):
+			if (setTint(args[i + 1])) {
+				i++;
+				break;
+			} else {
+				return EXIT_FAILURE;
+			}
 		break;
 
 		default:
@@ -111,4 +98,68 @@ int optionsHandle(char **args)
 		}
 	}
 	return CODE_CONTINUE;
+}
+
+void displayVersion() {
+	std::cout << "pics-trigger, "
+		  << "version " << VERSION_MAJOR << "." << VERSION_MINOR
+		  << ", made by Régis Berthelot, licensed under the "
+		  << "Apache Licence version 2.0"
+		  << std::endl;
+}
+
+void displayHelp() {
+	std::cout << "Usage: pics-trigger [OPTION] [image-file]"
+		  << std::endl << std::endl
+		  << "  -h,--help" << std::endl
+		  << "\t\tDisplay this help message"
+		  << std::endl
+		  << "  -v,--version" << std::endl
+		  << "\t\tDisplay version number, author and licensing"
+		  << std::endl
+		  << "  -f,--frames" << std::endl
+		  << "\t\tNumber of frames in the output sheet, must be greater than zero"
+		  << std::endl
+		  << "  -p,--no-playback" << std::endl
+		  << "\t\tStop the program once the sprite sheet is completed"
+		  << std::endl;
+}
+
+bool setFrameCount(const char *str) {
+	int frameCount;
+
+	if (!str) {
+		std::cerr << "Error: Missing frames count" << std::endl;
+		return false;
+	}
+	try {
+		frameCount = std::stoi(str);
+	} catch (const std::invalid_argument &e) {
+		std::cerr << "Error: Frames count is not a valid number" << std::endl;
+		return false;
+	}
+	if (frameCount <= 0) {
+		std::cerr << "Error: Frames count cannot be lower than one" << std::endl;
+		return false;
+	}
+	Parameters::get().setNumberOfFrames(frameCount);
+	return true;
+}
+
+bool setTint(const char *str) {
+	std::stringstream ss;
+	unsigned int rgba;
+
+	if (!str) {
+		std::cerr << "Error: Missing RGB value for tint" << std::endl;
+		return false;
+	}
+	if (!std::regex_match(str, std::regex("^[0-9A-Fa-f]{6}$"))) {
+		std::cerr << "Error: Not a valid RGB value" << std::endl;
+		return false;
+	}
+	ss << std::hex << str << "FF";
+	ss >> rgba;
+	Parameters::get().setColorTint(rgba);
+	return true;
 }

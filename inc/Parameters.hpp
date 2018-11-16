@@ -33,9 +33,13 @@ public:
 	void setKeepOnPlaying(bool keepOnPlaying);
 	bool getKeepOnPlaying();
 
+	void setColorTint(unsigned int rgba);
+	unsigned int getColorTint();
+
 private:
 	Parameters();
 
 	int numberOfFrames;
 	bool keepOnPlaying;
+	unsigned int rgba;
 };
