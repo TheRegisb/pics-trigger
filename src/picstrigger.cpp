@@ -19,6 +19,7 @@
 
 #include "TextureManager.hpp"
 #include "SpriteSheet.hpp"
+#include "Parameters.hpp"
 #include <SFML/Window.hpp>
 #include <iostream>
 #include <sstream>
@@ -112,8 +113,7 @@ int triggerPlayer(sf::Sprite partialImage, sf::Vector2u partialSize)
 {
 	sf::RenderWindow window(sf::VideoMode(partialSize.x, partialSize.y),
 				"triggered");
-	const unsigned int TMP_SHEET_SIZE = 6;
-	SpriteSheet spritesheet(window.getSize(), TMP_SHEET_SIZE);
+	SpriteSheet spritesheet(window.getSize(), Parameters::get().getNumberOfFrames());
 
 	window.setFramerateLimit(60);
 	srand(static_cast<unsigned int>(time(nullptr)));
@@ -143,9 +143,12 @@ int triggerPlayer(sf::Sprite partialImage, sf::Vector2u partialSize)
 
 		  filename << "pics-triggers_"
 			   << time(nullptr) << "_"
-			   << TMP_SHEET_SIZE << "x"
+			   << Parameters::get().getNumberOfFrames() << "x"
 			   << partialSize.x << "x" << partialSize.y << ".jpg";
 		  spritesheet.saveToFile(filename.str());
+		  if (!Parameters::get().getKeepOnPlaying()) {
+			  window.close();
+		  }
 		}
 		window.display();
 	}

@@ -13,10 +13,12 @@ Call `cmake --build .` from the build/ folder and, if the compilation succeed, a
 Call `cmake --build . --target ALL_BUILD --config Release` from the build/ forlder. A binary named pics-trigger will appear in the build/Release/ folder along its required .dll. These .dll must stay in the same folder of pics-trigger in order for it to work.
 
 # Usage
-pics-trigger [OPTION] [image-file]
+pics-trigger [OPTIONS] [image-file]
 
-Where OPTION is:
+Where OPTIONS is:
 ```
--h,--help	Display usage information
--v,--version	Display program version, author and licensing
+-h,--help		Display usage information
+-v,--version		Display program version, author and licensing
+-f,--frames		Number of frames in the output sheet, must be greater than zero
+-p,--no-playback	Stop the program once the sprite sheet is completed
 ```

@@ -35,7 +35,8 @@ set(SOURCES
   src/main.cpp
   src/TextureManager.cpp
   src/picstrigger.cpp
-  src/SpriteSheet.cpp)
+  src/SpriteSheet.cpp
+  src/Parameters.cpp)
 
 if (WIN32)
   include_directories(${CMAKE_SOURCE_DIR}/SFML_win32/include)
