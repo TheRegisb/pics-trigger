@@ -27,7 +27,30 @@ SpriteSheet::SpriteSheet(sf::Vector2u &singleFrameSize, unsigned int frameCount)
   }  
 }
 
+SpriteSheet::SpriteSheet(sf::Vector2u singleFrameSize, unsigned int frameCount)
+  : frameSize_(singleFrameSize), maxCount_(frameCount), state_(SpriteSheet::SheetState::BUILDING)
+{
+  if (!spriteSheet_.create(frameSize_.x * maxCount_, frameSize_.y)) {
+    throw new std::runtime_error("Failed to create SFML texture");
+  }  
+}
+
 bool SpriteSheet::addFrame(sf::Image &frame)
+{
+  static unsigned int count = 0;
+
+  if (count < maxCount_) {
+    spriteSheet_.update(frame, frameSize_.x * count, 0);
+    count++;
+    state_ = (count == maxCount_
+	      ? SpriteSheet::SheetState::READY
+	      : SpriteSheet::SheetState::BUILDING);
+    return true;
+  } 
+  return false;
+}
+
+bool SpriteSheet::addFrame(sf::Image frame)
 {
   static unsigned int count = 0;
 

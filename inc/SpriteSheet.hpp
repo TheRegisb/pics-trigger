@@ -33,8 +33,10 @@ public:
   };
 		   
   SpriteSheet(sf::Vector2u &singleFrameSize, unsigned int frameCount);
+  SpriteSheet(sf::Vector2u singleFrameSize, unsigned int frameCount);
 
   bool addFrame(sf::Image &frame);
+  bool addFrame(sf::Image frame);
   SheetState getState() const noexcept;
   bool saveToFile(const std::string &filename);
 
